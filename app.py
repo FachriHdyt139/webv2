@@ -80,19 +80,23 @@ app = Flask(__name__)
 @app.route('/' + TOKEN, methods=['POST'])
 def webhook():
     json_str = request.get_data().decode("UTF-8")
-    update = Update.de_json(json_str)
-    application.process_update(update)
+    update = Update.de_json(json_str, bot)  # Panggil Update dengan benar
+    application.update_queue.put(update)    # Letakkan update ke queue
     return 'OK'
 
 if __name__ == '__main__':
-    # Setup bot
+    # Setup bot dengan ApplicationBuilder
     application = ApplicationBuilder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_cmd))
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     # Set webhook URL to Render server
-    application.bot.set_webhook(WEBHOOK_URL + '/' + TOKEN)
+    if WEBHOOK_URL:
+        application.bot.set_webhook(WEBHOOK_URL + '/' + TOKEN)
+        print(f"Webhook set to: {WEBHOOK_URL + '/' + TOKEN}")
+    else:
+        print("❌ WEBHOOK_URL belum diatur!")
 
-    # Run Flask app
+    # Jalankan Flask app
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
