@@ -7,6 +7,7 @@ from flask import Flask, request
 
 TOKEN = "8049793340:AAF27_KvcsJvMS2Gqz97Hts3SW_GKevofgE"
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")  # URL untuk webhook
+print("WEBHOOK_URL:", WEBHOOK_URL)  # Pastikan ini tidak None
 
 # Validasi link TikTok
 def is_valid_tiktok_url(url):
