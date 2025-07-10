@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, send_file
 import os
+from flask import Flask, render_template, request, send_file
 import yt_dlp
 
 app = Flask(__name__)
@@ -8,7 +8,7 @@ app = Flask(__name__)
 def download_tiktok_video(url):
     ydl_opts = {
         'format': 'bestvideo+bestaudio/best',
-        'outtmpl': 'downloads/%(title)s.%(ext)s',  # Folder download
+        'outtmpl': 'downloads/%(title)s.%(ext)s',
         'quiet': True,
     }
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -29,4 +29,5 @@ def index():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    port = os.getenv('PORT', 5000)  # Menggunakan port yang disediakan oleh Render
+    app.run(host='0.0.0.0', port=port)  # Memastikan aplikasi mendengarkan di port yang benar
