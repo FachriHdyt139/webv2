@@ -1,6 +1,7 @@
 import os
 import re
 import requests
+import asyncio
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
 from flask import Flask, request
@@ -84,7 +85,7 @@ def webhook():
     application.update_queue.put(update)    # Letakkan update ke queue
     return 'OK'
 
-if __name__ == '__main__':
+async def set_webhook():
     # Setup bot dengan ApplicationBuilder
     application = ApplicationBuilder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
@@ -93,10 +94,14 @@ if __name__ == '__main__':
 
     # Set webhook URL to Render server
     if WEBHOOK_URL:
-        application.bot.set_webhook(WEBHOOK_URL + '/' + TOKEN)
+        await application.bot.set_webhook(WEBHOOK_URL + '/' + TOKEN)
         print(f"Webhook set to: {WEBHOOK_URL + '/' + TOKEN}")
     else:
         print("❌ WEBHOOK_URL belum diatur!")
 
+if __name__ == '__main__':
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(set_webhook())  # Menunggu webhook dipasang dengan benar
+    
     # Jalankan Flask app
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
