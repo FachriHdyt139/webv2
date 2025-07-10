@@ -81,12 +81,13 @@ app = Flask(__name__)
 @app.route('/' + TOKEN, methods=['POST'])
 def webhook():
     json_str = request.get_data().decode("UTF-8")
-    update = Update.de_json(json_str, bot)  # Panggil Update dengan benar
+    update = Update.de_json(json_str, application.bot)  # Menggunakan application.bot, bukan bot yang tidak didefinisikan
     application.update_queue.put(update)    # Letakkan update ke queue
     return 'OK'
 
 async def set_webhook():
     # Setup bot dengan ApplicationBuilder
+    global application
     application = ApplicationBuilder().token(TOKEN).build()
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_cmd))
