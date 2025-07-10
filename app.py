@@ -100,9 +100,9 @@ async def set_webhook():
     else:
         print("❌ WEBHOOK_URL belum diatur!")
 
+# Gunakan asyncio.run() untuk menjalankan event loop
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(set_webhook())  # Menunggu webhook dipasang dengan benar
+    asyncio.run(set_webhook())  # Menunggu webhook dipasang dengan benar
     
     # Jalankan Flask app
     app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
